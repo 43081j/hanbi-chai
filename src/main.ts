@@ -14,12 +14,12 @@ declare global {
 
 const plugin: Chai.ChaiPlugin = (chai) => {
   const Assertion = chai.Assertion;
-  const assertIsStub = (obj: unknown) => {
+  const assertIsStub = (obj: unknown): void => {
     if (
       typeof obj === 'object' &&
       obj !== null &&
-      obj.hasOwnProperty('original') &&
-      obj.hasOwnProperty('handler')
+      Object.prototype.hasOwnProperty.call(obj, 'original') &&
+      Object.prototype.hasOwnProperty.call(obj, 'handler')
     ) {
       return;
     }
