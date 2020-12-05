@@ -14,7 +14,21 @@ declare global {
 
 const plugin: Chai.ChaiPlugin = (chai) => {
   const Assertion = chai.Assertion;
+  const assertIsStub = (obj: unknown) => {
+    if (
+      typeof obj === 'object' &&
+      obj !== null &&
+      obj.hasOwnProperty('original') &&
+      obj.hasOwnProperty('handler')
+    ) {
+      return;
+    }
+
+    throw new TypeError('Object was not a valid stub');
+  };
+
   Assertion.addProperty('called', function called(this: Chai.AssertionStatic) {
+    assertIsStub(this._obj);
     this.assert(
       this._obj.called === true,
       'expected #{this} to have been called',
@@ -27,6 +41,7 @@ const plugin: Chai.ChaiPlugin = (chai) => {
   Assertion.addMethod(
     'callCount',
     function callCount(this: Chai.AssertionStatic, count: number): void {
+      assertIsStub(this._obj);
       this.assert(
         this._obj.callCount === count,
         'expected #{this} to have been called #{exp} times but ' +
@@ -41,6 +56,7 @@ const plugin: Chai.ChaiPlugin = (chai) => {
   Assertion.addMethod(
     'calledWith',
     function calledWith(this: Chai.AssertionStatic, ...args: unknown[]): void {
+      assertIsStub(this._obj);
       const result = this._obj.calledWith(...args);
       this.assert(
         result,
@@ -55,6 +71,7 @@ const plugin: Chai.ChaiPlugin = (chai) => {
   Assertion.addMethod(
     'returned',
     function returned(this: Chai.AssertionStatic, val: unknown): void {
+      assertIsStub(this._obj);
       const result = this._obj.returned(val);
       this.assert(
         result,
